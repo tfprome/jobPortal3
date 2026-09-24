@@ -52,7 +52,7 @@ const Login = () => {
         <div className="container">
           <div className="header">
             <img src="/careerconnect-black.png" alt="logo" />
-            <h3>Login to your account With your credentials please!</h3>
+            <h3>Login to your account With your credentials!</h3>
           </div>
           <form>
             <div className="inputTag">
