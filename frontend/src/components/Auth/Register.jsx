@@ -25,7 +25,11 @@ const Register = () => {
     setLoading(true);
     try {
       const { data } = await axios.post(
+<<<<<<< HEAD
         "http://localhost:8083/api/v1/user/register",
+=======
+        "http://localhost:4001/api/v1/user/register",
+>>>>>>> c9740e43a325a51258ec4a61d6d0c8bdc2d60442
         { name, phone, email, role, password },
         {
           headers: {
