@@ -192,7 +192,7 @@ pipeline {
  }
 
  always {
- echo "🎉 Hey! I am always block"
+ echo "🎉 Hey! I am always block and always providing"
 // sh "rm -f ${APP_NAME}-${IMAGE_TAG}.tar || true"
 // cleanWs()
  }
