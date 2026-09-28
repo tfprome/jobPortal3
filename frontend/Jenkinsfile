@@ -2,32 +2,20 @@ pipeline {
     agent any
 
     environment {
-<<<<<<< HEAD
 
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         PREVIOUS_TAG = "${env.BUILD_NUMBER.toInteger() - 1}"
         PROJECT_NAME = "react-job-portal-fe"
         PORT = "5173"
         ALERT_EMAIL = 'tfpromy99@gmail.com'   // change to your recipient
-=======
-        IMAGE_TAG    = "${env.BUILD_NUMBER}"
-        PREVIOUS_TAG = "${env.BUILD_NUMBER.toInteger() - 1}"
-        PROJECT_NAME = "react-job-portal-fe"
-        PORT         = "5173"
-        ALERT_EMAIL  = 'tfpromy99@gmail.com' // change to your recipient
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
     }
 
     stages {
         stage('Clone Repository') {
             steps {
-<<<<<<< HEAD
 
                 echo "Triggered by: ${env.ref}"
 
-=======
-                echo "Triggered by: ${env.ref}"
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
                 echo "Clone React Job Portal Frontend from Main Branch"
 
                 git branch: 'main',
@@ -36,10 +24,6 @@ pipeline {
                 sh 'ls -lah'
             }
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
         stage('prepare configuration file') {
             steps {
                 dir('frontend') {
@@ -48,7 +32,6 @@ pipeline {
                     echo "📝 Creating Project Configuration dynamically..."
 
                     writeFile file: 'Dockerfile', text: """
-<<<<<<< HEAD
                         FROM node:24-slim AS builder
 
                         WORKDIR /bjit
@@ -131,96 +114,6 @@ pipeline {
                 }
             }
         }
-=======
-FROM node:24-slim AS builder
-
-WORKDIR /bjit
-
-COPY package*.json ./
-
-RUN npm install
-
-FROM node:24-alpine AS production
-
-WORKDIR /bjit
-
-COPY --from=builder /bjit/node_modules ./node_modules
-COPY --from=builder /bjit/package*.json ./
-
-# COPY src ./src
-# COPY public ./public
-# COPY index.html ./
-# COPY vite.config.js ./
-# COPY .env ./
-
-COPY . .
-
-RUN adduser --disabled-password --gecos "" bjit
-
-RUN chown -R bjit:bjit /bjit
-
-EXPOSE ${env.PORT}
-
-USER bjit
-
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \\
-CMD node -e "require('http').get('http://localhost:5000', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => { process.exit(1); });"
-
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-"""
-                }
-            }
-        }
-
-//        stage('Secrets detection...') {
-//            steps {
-//                dir('frontend') {
-//                    script {
-//                        def rc = sh(
-//                            script: 'betterleaks dir . --report-path betterleaks.json --report-format json',
-//                            returnStatus: true
-//                        )
-//
-//                        if (rc != 0) {
-//                            unstable("betterleaks found potential secrets (exit ${rc})")
-//                        }
-//
-//                        archiveArtifacts artifacts: 'betterleaks.*', fingerprint: true
-//                    }
-//                }
-//            }
-//        }
-
-//        stage('SAST Scanning...') {
-//            steps {
-//                dir('frontend') {
-//                    sh "semgrep scan --config auto --json --output=semgrep.json"
-//
-//                    archiveArtifacts artifacts: 'semgrep.*', fingerprint: true
-//                }
-//            }
-//        }
-
-//        stage('Trivy FS Scan...') {
-//            steps {
-//                dir('frontend') {
-//                    sh '''
-//                        trivy fs . \\
-//                        --scanners vuln,misconfig,secret \\
-//                        --skip-files 'betterleaks.json,semgrep.json,.pkgjson.md5' \\
-//                        --format json -o trivy-fs-report.json
-//
-//                        trivy convert \\
-//                        --format template --template "@/vagrant/html.tpl" \\
-//                        -o trivy-fs-report.html trivy-fs-report.json
-//                    '''
-//
-//                    archiveArtifacts artifacts: 'trivy-fs-report.*', fingerprint: true
-//                }
-//            }
-//        }
-
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
         stage('Build Docker Image...') {
             steps {
                 dir('frontend') {
@@ -241,7 +134,6 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
                 }
             }
         }
-<<<<<<< HEAD
         stage('Trivy Image Scan...') {
             steps {
                 dir('frontend') {
@@ -270,40 +162,6 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
                 sleep(10)
             }
         }
-=======
-
-//        stage('Trivy Image Scan...') {
-//            steps {
-//                dir('frontend') {
-//                    sh '''
-//                        trivy image \\
-//                        --scanners vuln,misconfig,secret \\
-//                        --skip-files '**/betterleaks.json,**/semgrep.json' \\
-//                        --format json -o trivy-image-report.json "${PROJECT_NAME}:v${IMAGE_TAG}"
-//
-//                        trivy convert \\
-//                        --format template --template "@/vagrant/html.tpl" \\
-//                        -o trivy-image-report.html trivy-image-report.json
-//                    '''
-//
-//                    archiveArtifacts artifacts: 'trivy-image-report.*', fingerprint: true
-//                }
-//            }
-//        }
-
-        stage('Run our Frontend') {
-            steps {
-                echo "Deleting previous running container -- ${env.PROJECT_NAME}-v${env.PREVIOUS_TAG}"
-
-                sh "docker rm -f ${env.PROJECT_NAME}-v${env.PREVIOUS_TAG}"
-
-                sh "docker run -d -p 8081:${env.PORT} --name ${env.PROJECT_NAME}-v${env.IMAGE_TAG} ${env.PROJECT_NAME}:v${env.IMAGE_TAG}"
-
-                sleep(10)
-            }
-        }
-
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
         stage('Check our Frontend Container running status log') {
             steps {
                 sh "docker logs ${env.PROJECT_NAME}-v${env.IMAGE_TAG}"
@@ -328,29 +186,18 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
                     <p>Console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
                     <p>The full console log is attached.</p>
                 """,
-<<<<<<< HEAD
                 attachLog: true,     // attaches build.log
                 compressLog: false   // plain text, not .gz
-=======
-                attachLog: true, // attaches build.log
-                compressLog: false // plain text, not .gz
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
             )
         }
 
         always {
-<<<<<<< HEAD
             echo "🎉 Hey! I am always block with email integration"
-=======
-            echo "🎉 Hey! I am always block"
-
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
             emailext(
                 to: "${ALERT_EMAIL}",
                 subject: "Jenkins Build STATUS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 mimeType: 'text/html',
                 body: """
-<<<<<<< HEAD
                     <p>Build <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> failed.</p>
                     <p>Console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
                     <p>The full console log is attached.</p>
@@ -358,22 +205,8 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
                 attachLog: true,     // attaches build.log
                 compressLog: false   // plain text, not .gz
             )
-=======
-                    <p>Build <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> status.</p>
-                    <p>Console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
-                    <p>The full console log is attached.</p>
-                """,
-                attachLog: true, // attaches build.log
-                compressLog: false // plain text, not .gz
-            )
-
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
             // sh "rm -f ${APP_NAME}-${IMAGE_TAG}.tar || true"
             // cleanWs()
         }
     }
 }
-<<<<<<< HEAD
- 
-=======
->>>>>>> 0a05ecfefabf0a6df0295aa915f9ba0ee6b870a3
