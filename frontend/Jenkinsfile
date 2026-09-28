@@ -192,13 +192,13 @@ pipeline {
         }
 
         always {
-            echo "🎉 Hey! I am always block with email integration"
+            echo "🎉 Hey! I am always block with email test"
             emailext(
                 to: "${ALERT_EMAIL}",
                 subject: "Jenkins Build STATUS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 mimeType: 'text/html',
                 body: """
-                    <p>Build <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> failed.</p>
+                    <p>Build <b>${env.JOB_NAME} #${env.BUILD_NUMBER}</b> status.</p>
                     <p>Console: <a href="${env.BUILD_URL}console">${env.BUILD_URL}console</a></p>
                     <p>The full console log is attached.</p>
                 """,
